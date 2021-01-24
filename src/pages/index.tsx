@@ -1,14 +1,10 @@
 import React from 'react'
-import { Link } from 'gatsby'
-import netlifyIdentity from 'netlify-identity-widget'
-
 import Layout from '../components/layout'
-import Image from '../components/image'
 import SEO from '../components/seo'
 import useAuth from '../hooks/useAuth'
 
 const IndexPage = () => {
-  const [user, { login, logout, signup }] = useAuth()
+  const [user, { login, logout, signup, manage }] = useAuth()
   return (
     <Layout>
       <SEO title="Home" />
@@ -19,7 +15,7 @@ const IndexPage = () => {
           <button id="left" onClick={logout}>
             Log Out
           </button>
-          <button id="right" onClick={() => {}}>
+          <button id="right" onClick={manage}>
             Manage Subscription
           </button>
         </div>

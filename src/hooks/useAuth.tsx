@@ -15,8 +15,21 @@ const useAuth = () => {
   const login = useCallback(() => netlifyIdentity.open('login'), [])
   const signup = useCallback(() => netlifyIdentity.open('signup'), [])
   const logout = useCallback(() => netlifyIdentity.logout(), [])
+  const manage = useCallback(() => {
+    fetch('/.netlify/functions/create-manage-link', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${user.token.access_token}`,
+      },
+    })
+      .then(res => res.json())
+      .then(link => {
+        window.location.href = link
+      })
+      .catch(err => console.error(err))
+  }, [user])
 
-  return [user, { login, signup, logout }] as const
+  return [user, { login, signup, logout, manage }] as const
 }
 
 export default useAuth

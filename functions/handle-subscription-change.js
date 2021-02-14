@@ -2,6 +2,12 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY)
 const fetch = require('node-fetch')
 const { faunaFetch } = require('./utils/fauna')
 
+const stripePlanToRole = {
+  free: ['free'],
+  pro: ['free', 'pro'],
+  premium: ['free', 'pro', 'premium'],
+}
+
 exports.handler = async ({ body, headers }, context) => {
   try {
     // make sure this event was sent legitimately.
@@ -33,7 +39,7 @@ exports.handler = async ({ body, headers }, context) => {
 
     // take the first word of the plan name and use it as the role
     const plan = subscription.items.data[0].plan.nickname
-    const role = plan.split(' ')[0].toLowerCase()
+    const planName = plan.split(' ')[0].toLowerCase()
 
     // send a call to the Netlify Identity admin API to update the user role
     const { identity } = context.clientContext
@@ -45,7 +51,7 @@ exports.handler = async ({ body, headers }, context) => {
       },
       body: JSON.stringify({
         app_metadata: {
-          roles: [role],
+          roles: stripePlanToRole[planName],
         },
       }),
     })
